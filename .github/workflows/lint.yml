@@ -21,7 +21,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install Python dependencies
-        run: pip install pyyaml jinja2-cli
+        run: pip install pyyaml jinja2
 
       - name: Validate copier.yml syntax
         run: |
@@ -39,12 +39,32 @@ jobs:
 
       - name: Check Jinja2 syntax
         run: |
-          echo "Checking Jinja2 template syntax..."
-          for file in $(find . -name "*.jinja"); do
-            echo "Checking: $file"
-            jinja2 "$file" --format=yaml -D project_name=test -D package_name=test -D description=test -D author_name=test -D author_email=test -D python_version=3.12 > /dev/null
-          done
-          echo "✓ All .jinja files have valid syntax"
+          python << 'EOF'
+          import sys
+          from pathlib import Path
+          from jinja2 import Environment, FileSystemLoader, TemplateSyntaxError
+
+          print("Checking Jinja2 template syntax...")
+          errors = []
+
+          for jinja_file in Path('.').rglob('*.jinja'):
+              print(f"Checking: {jinja_file}")
+              try:
+                  # Read file content and try to parse as Jinja2
+                  content = jinja_file.read_text()
+                  env = Environment()
+                  env.parse(content)
+              except TemplateSyntaxError as e:
+                  errors.append(f"{jinja_file}: {e}")
+
+          if errors:
+              print("\n❌ Jinja2 syntax errors found:")
+              for error in errors:
+                  print(f"  - {error}")
+              sys.exit(1)
+          else:
+              print("✓ All .jinja files have valid syntax")
+          EOF
 
       - name: Lint markdown
         uses: DavidAnson/markdownlint-cli2-action@v18
