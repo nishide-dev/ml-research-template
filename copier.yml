@@ -194,6 +194,14 @@ _exclude:
   - "build"
   - "*.egg-info"
   - "{% if not use_ruff %}ruff.toml.jinja{% endif %}"
+  - ".github/workflows/lint.yml"
+  - ".github/workflows/test-template.yml"
+  - ".github/ISSUE_TEMPLATE"
+  - ".github/pull_request_template.md"
+  - ".markdownlint.json"
+  - ".pre-commit-config.yaml"
+  - "CONTRIBUTING.md"
+  - "LICENSE"
 
 # ============================================================================
 # Post-generation tasks
