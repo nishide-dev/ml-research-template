@@ -1,69 +1,71 @@
 # ML Research Template
 
-**PyTorch Lightning + Hydra + W&B を使った機械学習研究プロジェクトの Copier テンプレート**
+**A Copier template for machine learning research projects using PyTorch Lightning + Hydra + W&B**
+
+[日本語版 README](README-ja.md)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
 
-## 特徴
+## Features
 
-### 🔥 最新のMLスタック
+### 🔥 Modern ML Stack
 
-- **PyTorch Lightning 2.x**: 高レベル訓練フレームワーク
-- **Hydra 1.3+**: 強力な設定管理システム
-- **W&B/TensorBoard/MLflow**: 実験トラッキング
-- **PyTorch Geometric**: グラフニューラルネットワーク（オプション）
+- **PyTorch Lightning 2.x**: High-level training framework
+- **Hydra 1.3+**: Powerful configuration management
+- **W&B/TensorBoard/MLflow**: Experiment tracking
+- **PyTorch Geometric**: Graph Neural Networks (optional)
 
-### ⚡ 高速な開発環境
+### ⚡ Fast Development Environment
 
-- **uv**: pip の 10-100 倍高速な Python パッケージマネージャー
-- **pixi**: Conda 代替、GPU 環境の自動設定
-- **ruff**: 高速リンター & フォーマッター
-- **ty**: 高速型チェッカー（by Astral）
-- **pytest**: テストフレームワーク
+- **uv**: 10-100x faster Python package manager than pip
+- **pixi**: Conda alternative with automatic GPU environment setup
+- **ruff**: Fast linter & formatter
+- **ty**: Fast type checker (by Astral)
+- **pytest**: Testing framework
 
-### 🎯 9種類の PyTorch + CUDA プリセット
+### 🎯 9 PyTorch + CUDA Presets
 
-| PyTorch | CUDA バージョン |
-|---------|----------------|
-| 2.9.0   | 12.6, 13.0     |
-| 2.8.0   | 12.6, 12.8     |
-| 2.7.1   | 11.8, 12.6     |
-| 2.6.0   | 12.4           |
-| 2.5.1   | 12.1           |
-| 2.4.1   | 11.8           |
+| PyTorch | CUDA Versions |
+|---------|---------------|
+| 2.9.0   | 12.6, 13.0    |
+| 2.8.0   | 12.6, 12.8    |
+| 2.7.1   | 11.8, 12.6    |
+| 2.6.0   | 12.4          |
+| 2.5.1   | 12.1          |
+| 2.4.1   | 11.8          |
 
-## クイックスタート
+## Quick Start
 
-### 前提条件
+### Prerequisites
 
 ```bash
-# uv のインストール
+# Install uv
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# または pixi のインストール
+# Or install pixi
 curl -fsSL https://pixi.sh/install.sh | bash
 ```
 
-### プロジェクト生成
+### Generate Project
 
 ```bash
-# GitHub から直接（推奨）
+# From GitHub (recommended)
 uvx copier copy --trust gh:nishide-dev/ml-research-template my-project
 
-# ローカルクローンから
+# From local clone
 git clone https://github.com/nishide-dev/ml-research-template.git
 uvx copier copy --trust ./ml-research-template my-project
 
-# プロジェクトに移動
+# Navigate to your project
 cd my-project
 
-# 訓練開始
-uv run python src/my_project/train.py  # uv の場合
-pixi run train                           # pixi の場合
+# Start training
+uv run python src/my_project/train.py  # if using uv
+pixi run train                           # if using pixi
 ```
 
-**ヒント**: Git 設定から作者情報を自動入力：
+**Tip**: Auto-fill author information from Git config:
 
 ```bash
 uvx copier copy --trust gh:nishide-dev/ml-research-template my-project \
@@ -71,49 +73,49 @@ uvx copier copy --trust gh:nishide-dev/ml-research-template my-project \
   --data author_email="$(git config user.email)"
 ```
 
-### 設定オプション
+### Configuration Options
 
-インタラクティブプロンプトで以下を設定：
+Interactive prompts will ask for:
 
-**プロジェクト基本情報**:
-- プロジェクト名、パッケージ名、説明
-- 作者名、メールアドレス
-- Python バージョン (3.10, 3.11, 3.12, 3.13)
+**Project Basics**:
+- Project name, package name, description
+- Author name, email
+- Python version (3.10, 3.11, 3.12, 3.13)
 
-**パッケージマネージャー**:
-- `uv`: 高速、pip 互換、シンプル
-- `pixi`: Conda ベース、GPU 環境自動設定
+**Package Manager**:
+- `uv`: Fast, pip-compatible, simple
+- `pixi`: Conda-based, automatic GPU setup
 
-**PyTorch/CUDA 設定**:
-- 9 種類のプリセット（PyTorch 2.4-2.9, CUDA 11.8-13.0）
-- カスタム設定も可能
-- torchvision / torchaudio の選択
+**PyTorch/CUDA Configuration**:
+- 9 presets (PyTorch 2.4-2.9, CUDA 11.8-13.0)
+- Custom configuration available
+- Optional torchvision / torchaudio
 
-**ML フレームワーク**:
+**ML Frameworks**:
 - PyTorch Lightning (2.2, 2.3, 2.4)
 - Hydra (1.2, 1.3)
-- PyTorch Geometric（GNN 用）
+- PyTorch Geometric (for GNNs)
 
-**実験トラッキング**:
-- TensorBoard（シンプル）
-- Weights & Biases（高機能）
-- MLflow（オンプレミス向け）
-- 両方（TensorBoard + W&B）
-- なし
+**Experiment Tracking**:
+- TensorBoard (simple)
+- Weights & Biases (feature-rich)
+- MLflow (on-premise)
+- Both (TensorBoard + W&B)
+- None
 
-**開発ツール**:
+**Development Tools**:
 - ruff (linter/formatter)
 - ty (type checker)
 - pytest (testing)
 
-## 生成されるプロジェクト構造
+## Generated Project Structure
 
 ```
 my-project/
 ├── src/
 │   └── my_project/
 │       ├── __init__.py
-│       ├── train.py              # メイン訓練スクリプト（Hydra）
+│       ├── train.py              # Main training script (Hydra)
 │       ├── models/
 │       │   ├── __init__.py
 │       │   └── base_model.py     # LightningModule
@@ -125,8 +127,8 @@ my-project/
 ├── tests/
 │   ├── __init__.py
 │   └── test_my_project.py
-├── configs/                      # Hydra 設定
-│   ├── config.yaml               # メイン設定
+├── configs/                      # Hydra configuration
+│   ├── config.yaml               # Main config
 │   ├── model/
 │   │   └── default.yaml
 │   ├── data/
@@ -139,52 +141,52 @@ my-project/
 │   │   └── mlflow.yaml
 │   └── experiment/
 │       └── baseline.yaml
-├── pyproject.toml                # uv + 依存関係
-├── pixi.toml                     # pixi 設定（pixi 選択時）
-├── ruff.toml                     # ruff 設定
+├── pyproject.toml                # uv + dependencies
+├── pixi.toml                     # pixi config (if pixi selected)
+├── ruff.toml                     # ruff config
 ├── .gitignore
 ├── .python-version
 └── README.md
 ```
 
-## 使用例
+## Usage Examples
 
-### 基本的な訓練
+### Basic Training
 
 ```bash
-# デフォルト設定で訓練
+# Train with default config
 uv run python src/my_project/train.py
 
-# パラメータをオーバーライド
+# Override parameters
 uv run python src/my_project/train.py trainer.max_epochs=50 data.batch_size=64
 
-# 特定の実験設定を使用
+# Use specific experiment config
 uv run python src/my_project/train.py experiment=baseline
 ```
 
-### Hydra の設定管理
+### Hydra Configuration Management
 
 ```bash
-# 複数のパラメータをオーバーライド
+# Override multiple parameters
 uv run python src/my_project/train.py \
   trainer.max_epochs=100 \
   data.batch_size=128 \
   model.learning_rate=0.001 \
   logger.name=my_experiment
 
-# マルチランスイープ（ハイパーパラメータ探索）
+# Multi-run sweep (hyperparameter search)
 uv run python src/my_project/train.py -m \
   data.batch_size=32,64,128 \
   model.learning_rate=0.0001,0.001,0.01
 ```
 
-### 実験トラッキング
+### Experiment Tracking
 
 ```bash
 # TensorBoard
 tensorboard --logdir logs/
 
-# Weights & Biases（事前にログインが必要）
+# Weights & Biases (login required)
 wandb login
 uv run python src/my_project/train.py
 
@@ -192,32 +194,32 @@ uv run python src/my_project/train.py
 mlflow ui --backend-store-uri file:./mlruns
 ```
 
-### コード品質チェック
+### Code Quality Checks
 
 ```bash
-# リント + フォーマット
+# Format and lint
 uv run ruff format .
 uv run ruff check . --fix
 
-# 型チェック
+# Type check
 uv run ty check src/
 
-# テスト実行
+# Run tests
 uv run pytest tests/ -v
 
-# カバレッジ付きテスト
+# Run tests with coverage
 uv run pytest --cov=src --cov-report=html
 ```
 
-## 開発
+## Development
 
-### テンプレートのテスト
+### Testing the Template
 
 ```bash
-# デフォルト設定でテスト
+# Test with defaults
 uvx copier copy --trust --defaults . /tmp/test-project
 
-# カスタム設定でテスト
+# Test with custom config
 uvx copier copy --trust \
   --data project_name="test-ml" \
   --data python_version="3.12" \
@@ -228,37 +230,36 @@ uvx copier copy --trust \
   --data logger_choice="tensorboard" \
   . /tmp/test-project
 
-# 生成されたプロジェクトを検証
+# Verify the generated project
 cd /tmp/test-project
 uv sync
 uv run pytest tests/
 uv run ruff check .
 ```
 
-### テンプレートの更新
+### Updating the Template
 
 ```bash
-# 既存プロジェクトを最新テンプレートで更新
+# Update existing project with latest template
 uvx copier update /path/to/my-project
 ```
 
-## 関連プロジェクト
+## Related Projects
 
-- **[claude-code-ml-research](https://github.com/nishide-dev/claude-code-ml-research)**: Claude Code プラグイン（このテンプレートを使用）
-- **[uv](https://github.com/astral-sh/uv)**: 高速 Python パッケージマネージャー
-- **[pixi](https://pixi.sh/)**: 高速 Conda 代替
-- **[PyTorch Lightning](https://lightning.ai/)**: PyTorch 訓練フレームワーク
-- **[Hydra](https://hydra.cc/)**: 設定管理フレームワーク
+- **[uv](https://github.com/astral-sh/uv)**: Fast Python package manager
+- **[pixi](https://pixi.sh/)**: Fast Conda alternative
+- **[PyTorch Lightning](https://lightning.ai/)**: PyTorch training framework
+- **[Hydra](https://hydra.cc/)**: Configuration management framework
 
-## コントリビューティング
+## Contributing
 
-コントリビューションを歓迎します！詳細は [CONTRIBUTING.md](CONTRIBUTING.md) を参照してください。
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
-## ライセンス
+## License
 
-MIT License - 詳細は [LICENSE](LICENSE) を参照してください。
+MIT License - see [LICENSE](LICENSE) for details.
 
-## サポート
+## Support
 
 - **Issues**: [GitHub Issues](https://github.com/nishide-dev/ml-research-template/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/nishide-dev/ml-research-template/discussions)
