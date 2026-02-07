@@ -12,8 +12,7 @@
 - **PyTorch Lightning 2.x**: 高レベル訓練フレームワーク
 - **Hydra 1.3+**: 強力な設定管理システム
 - **W&B/TensorBoard/MLflow**: 実験トラッキング
-- **PyTorch Geometric**: グラフニューラルネットワーク（GNN）
-- **Hugging Face Transformers**: 大規模言語モデル（LLM）のファインチューニング
+- **PyTorch Geometric**: グラフニューラルネットワーク（オプション）
 
 ### ⚡ 高速な開発環境
 
@@ -23,7 +22,7 @@
 - **ty**: 高速型チェッカー（by Astral）
 - **pytest**: テストフレームワーク
 
-### 🎯 16種類の PyTorch + CUDA プリセット
+### 🎯 9種類の PyTorch + CUDA プリセット
 
 | PyTorch | CUDA バージョン |
 |---------|----------------|
@@ -86,7 +85,7 @@ uvx copier copy --trust gh:nishide-dev/ml-research-template my-project \
 - `pixi`: Conda ベース、GPU 環境自動設定
 
 **PyTorch/CUDA 設定**:
-- 16 種類のプリセット（PyTorch 2.4-2.9, CUDA 11.8-13.0）
+- 9 種類のプリセット（PyTorch 2.4-2.9, CUDA 11.8-13.0）
 - カスタム設定も可能
 - torchvision / torchaudio の選択
 
@@ -106,8 +105,6 @@ uvx copier copy --trust gh:nishide-dev/ml-research-template my-project \
 - ruff (linter/formatter)
 - ty (type checker)
 - pytest (testing)
-- GitHub Actions (CI/CD)
-- Nix + direnv (環境管理)
 
 ## 生成されるプロジェクト構造
 

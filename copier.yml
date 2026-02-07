@@ -73,16 +73,6 @@ use_pytest:
   help: "Pytest (テストフレームワーク) を使用しますか？"
   default: true
 
-use_github_actions:
-  type: bool
-  help: "GitHub Actions CI/CDを設定しますか？"
-  default: true
-
-use_nix:
-  type: bool
-  help: "Nix + direnv による開発環境管理を使用しますか？"
-  default: false
-
 # ============================================================================
 # User questions - PyTorch/CUDA configuration
 # ============================================================================
@@ -204,8 +194,6 @@ _exclude:
   - "build"
   - "*.egg-info"
   - "{% if not use_ruff %}ruff.toml.jinja{% endif %}"
-  - "{% if not use_nix %}.envrc.jinja{% endif %}"
-  - "{% if not use_github_actions %}.github{% endif %}"
 
 # ============================================================================
 # Post-generation tasks
