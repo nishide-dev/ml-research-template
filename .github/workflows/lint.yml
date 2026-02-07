@@ -1,0 +1,52 @@
+name: Lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  lint-template:
+    name: Lint Template Files
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate copier.yml syntax
+        run: |
+          python -c "import yaml; yaml.safe_load(open('copier.yml'))"
+          echo "✓ copier.yml is valid YAML"
+
+      - name: Check for required files
+        run: |
+          test -f copier.yml && echo "✓ copier.yml exists"
+          test -f README.md && echo "✓ README.md exists"
+          test -f LICENSE && echo "✓ LICENSE exists"
+          test -f .gitignore && echo "✓ .gitignore exists"
+          test -d .github/ISSUE_TEMPLATE && echo "✓ .github/ISSUE_TEMPLATE exists"
+          test -d .github/workflows && echo "✓ .github/workflows exists"
+
+      - name: Install Jinja2 CLI
+        run: pip install jinja2-cli pyyaml
+
+      - name: Check Jinja2 syntax
+        run: |
+          echo "Checking Jinja2 template syntax..."
+          for file in $(find . -name "*.jinja"); do
+            echo "Checking: $file"
+            jinja2 "$file" --format=yaml -D project_name=test -D package_name=test -D description=test -D author_name=test -D author_email=test -D python_version=3.12 > /dev/null
+          done
+          echo "✓ All .jinja files have valid syntax"
+
+      - name: Lint markdown
+        uses: DavidAnson/markdownlint-cli2-action@v18
+        with:
+          globs: "*.md"
