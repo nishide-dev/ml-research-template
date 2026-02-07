@@ -42,8 +42,10 @@ jobs:
             --data use_ruff=true \
             --data use_ty=true \
             --data use_pytest=true \
-            --data use_github_actions=true \
+            --data use_github_actions=false \
             --data use_nix=false \
+            --data use_torchvision=true \
+            --data use_torchaudio=false \
             --data use_lightning=true \
             --data lightning_version="2.4" \
             --data use_hydra=true \

@@ -76,14 +76,14 @@ class LitDataModule(pl.LightningDataModule):
         self.test_dataset: Optional[datasets.VisionDataset] = None
 
     def _build_transform(self, augment: bool = False, normalize: bool = True) -> transforms.Compose:
-        """Build transforms pipeline.
+        """Build the transforms pipeline.
 
         Args:
-            augment: Apply data augmentation
-            normalize: Apply normalization
+            augment: Apply data augmentation.
+            normalize: Apply normalization.
 
         Returns:
-            Composed transforms
+            Composed transforms.
         """
         transform_list = []
 
@@ -94,13 +94,13 @@ class LitDataModule(pl.LightningDataModule):
                 transforms.RandomCrop(32, padding=4),
                 transforms.RandomHorizontalFlip(),
             ])
-            {% else -%}
+            {%- else -%}
             # Data augmentation for MNIST-like datasets
             transform_list.extend([
                 transforms.RandomAffine(degrees=10, translate=(0.1, 0.1)),
                 transforms.RandomHorizontalFlip(),
             ])
-            {% endif -%}
+            {%- endif %}
 
         transform_list.append(transforms.ToTensor())
 
@@ -108,7 +108,7 @@ class LitDataModule(pl.LightningDataModule):
             {% if dataset_choice == 'mnist' or dataset_choice == 'fashion-mnist' -%}
             # MNIST/Fashion-MNIST normalization
             transform_list.append(transforms.Normalize((0.1307,), (0.3081,)))
-            {% elif dataset_choice in ['cifar10', 'cifar100'] -%}
+            {%- elif dataset_choice in ['cifar10', 'cifar100'] -%}
             # CIFAR normalization
             transform_list.append(
                 transforms.Normalize(
@@ -116,7 +116,7 @@ class LitDataModule(pl.LightningDataModule):
                     std=[0.2470, 0.2435, 0.2616]
                 )
             )
-            {% else -%}
+            {%- else -%}
             # Default normalization (ImageNet stats)
             transform_list.append(
                 transforms.Normalize(
@@ -124,7 +124,7 @@ class LitDataModule(pl.LightningDataModule):
                     std=[0.229, 0.224, 0.225]
                 )
             )
-            {% endif -%}
+            {%- endif %}
 
         return transforms.Compose(transform_list)
 
@@ -135,10 +135,10 @@ class LitDataModule(pl.LightningDataModule):
         self.dataset_class(self.data_dir, train=False, download=True)
 
     def setup(self, stage: Optional[str] = None) -> None:
-        """Setup datasets (called on every GPU).
+        """Set up datasets (called on every GPU).
 
         Args:
-            stage: fit, validate, test, or predict
+            stage: fit, validate, test, or predict.
         """
         if stage == "fit" or stage is None:
             # Load full training set
@@ -160,7 +160,8 @@ class LitDataModule(pl.LightningDataModule):
             )
 
     def train_dataloader(self) -> DataLoader:
-        """Training dataloader."""
+        """Return training dataloader."""
+        assert self.train_dataset is not None
         return DataLoader(
             self.train_dataset,
             batch_size=self.batch_size,
@@ -171,7 +172,8 @@ class LitDataModule(pl.LightningDataModule):
         )
 
     def val_dataloader(self) -> DataLoader:
-        """Validation dataloader."""
+        """Return validation dataloader."""
+        assert self.val_dataset is not None
         return DataLoader(
             self.val_dataset,
             batch_size=self.batch_size,
@@ -182,7 +184,8 @@ class LitDataModule(pl.LightningDataModule):
         )
 
     def test_dataloader(self) -> DataLoader:
-        """Test dataloader."""
+        """Return test dataloader."""
+        assert self.test_dataset is not None
         return DataLoader(
             self.test_dataset,
             batch_size=self.batch_size,

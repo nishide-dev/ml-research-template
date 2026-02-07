@@ -46,7 +46,7 @@ def test_training_step():
     {% endif -%}
     y = torch.randint(0, 10, (batch_size,))
 
-    loss = model.training_step((x, y), batch_idx=0)
+    loss = model.training_step((x, y), 0)
 
     assert loss is not None
     assert loss.requires_grad

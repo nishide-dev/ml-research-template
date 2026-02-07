@@ -21,10 +21,10 @@ logger = logging.getLogger(__name__)
 {% if use_hydra -%}
 @hydra.main(version_base=None, config_path="../../configs", config_name="config")
 def main(cfg: DictConfig) -> None:
-    """Main training function.
+    """Run the main training function.
 
     Args:
-        cfg: Hydra configuration
+        cfg: Hydra configuration.
     """
     logger.info("Configuration:\n%s", OmegaConf.to_yaml(cfg))
 

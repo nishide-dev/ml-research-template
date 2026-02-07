@@ -20,6 +20,9 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Install Python dependencies
+        run: pip install pyyaml jinja2-cli
+
       - name: Validate copier.yml syntax
         run: |
           python -c "import yaml; yaml.safe_load(open('copier.yml'))"
@@ -33,9 +36,6 @@ jobs:
           test -f .gitignore && echo "✓ .gitignore exists"
           test -d .github/ISSUE_TEMPLATE && echo "✓ .github/ISSUE_TEMPLATE exists"
           test -d .github/workflows && echo "✓ .github/workflows exists"
-
-      - name: Install Jinja2 CLI
-        run: pip install jinja2-cli pyyaml
 
       - name: Check Jinja2 syntax
         run: |
