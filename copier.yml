@@ -185,34 +185,6 @@ wandb_entity:
   when: "{{ logger_choice in ['wandb', 'both'] }}"
 
 # ============================================================================
-# User questions - Project template type
-# ============================================================================
-
-template_type:
-  type: str
-  help: "プロジェクトテンプレートタイプを選択してください"
-  default: "image-classification"
-  choices:
-    "画像分類 (Image Classification)": "image-classification"
-    "セグメンテーション (Segmentation)": "segmentation"
-    "物体検出 (Object Detection)": "object-detection"
-    "テキスト分類 (Text Classification)": "text-classification"
-    "GNN (Graph Neural Network)": "gnn"
-    "カスタム (Minimal Template)": "minimal"
-
-dataset_choice:
-  type: str
-  help: "初期データセットを選択してください（サンプルコード用）"
-  default: "mnist"
-  choices:
-    "MNIST (手書き数字)": "mnist"
-    "CIFAR-10 (画像10クラス)": "cifar10"
-    "CIFAR-100 (画像100クラス)": "cifar100"
-    "Fashion-MNIST": "fashion-mnist"
-    "カスタム": "custom"
-  when: "{{ template_type == 'image-classification' }}"
-
-# ============================================================================
 # File/directory exclusion settings
 # ============================================================================
 
@@ -234,8 +206,6 @@ _exclude:
   - "{% if not use_ruff %}ruff.toml.jinja{% endif %}"
   - "{% if not use_nix %}.envrc.jinja{% endif %}"
   - "{% if not use_github_actions %}.github{% endif %}"
-  - "{% if template_type != 'gnn' %}src/{{ package_name }}/models/gnn{% endif %}"
-  - "{% if template_type != 'segmentation' %}src/{{ package_name }}/models/segmentation{% endif %}"
 
 # ============================================================================
 # Post-generation tasks

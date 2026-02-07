@@ -17,11 +17,7 @@ normalize: true
 augment_train: false  # Set to true for better generalization
 
 # Dataset
-{% if dataset_choice -%}
-dataset_name: {{ dataset_choice.upper().replace('-', '') }}
-{% else -%}
 dataset_name: MNIST
-{% endif -%}
 {% else -%}
 # Add your data configuration here
 data_dir: ./data

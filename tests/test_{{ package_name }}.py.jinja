@@ -17,11 +17,7 @@ def test_model_forward():
     """Test model forward pass."""
     model = LitModel(input_dim=784, hidden_dim=128, output_dim=10)
     batch_size = 32
-    {% if dataset_choice in ['cifar10', 'cifar100'] -%}
-    x = torch.randn(batch_size, 3, 32, 32)
-    {% else -%}
     x = torch.randn(batch_size, 28, 28)
-    {% endif -%}
 
     logits = model(x)
 
@@ -39,11 +35,7 @@ def test_training_step():
     """Test training step."""
     model = LitModel(input_dim=784, hidden_dim=128, output_dim=10)
     batch_size = 16
-    {% if dataset_choice in ['cifar10', 'cifar100'] -%}
-    x = torch.randn(batch_size, 3, 32, 32)
-    {% else -%}
     x = torch.randn(batch_size, 28, 28)
-    {% endif -%}
     y = torch.randint(0, 10, (batch_size,))
 
     loss = model.training_step((x, y), 0)

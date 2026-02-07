@@ -14,7 +14,7 @@ import torch.nn.functional as torch_f
 class LitModel(pl.LightningModule):
     """Base PyTorch Lightning model.
 
-    A simple feedforward neural network for {{ template_type }} tasks.
+    A simple feedforward neural network for image classification tasks.
     Customize this for your specific use case.
     """
 
@@ -110,7 +110,9 @@ class LitModel(pl.LightningModule):
         self.log("val/loss", loss, prog_bar=True)
         self.log("val/acc", acc, prog_bar=True)
 
-    def test_step(self, batch: tuple[torch.Tensor, torch.Tensor], _batch_idx: int) -> None:  # noqa: PT019
+    def test_step(
+        self, batch: tuple[torch.Tensor, torch.Tensor], _batch_idx: int  # noqa: PT019
+    ) -> None:
         """Perform a test step.
 
         Args:

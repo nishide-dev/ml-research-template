@@ -4,17 +4,9 @@
 _target_: {{ package_name }}.models.base_model.LitModel
 
 # Model architecture
-{% if dataset_choice in ['cifar10', 'cifar100'] -%}
-input_dim: 3072  # 32x32x3 for CIFAR
-{% else -%}
 input_dim: 784  # 28x28 for MNIST
-{% endif -%}
 hidden_dim: 256
-{% if dataset_choice == 'cifar100' -%}
-output_dim: 100
-{% else -%}
 output_dim: 10
-{% endif -%}
 
 # Optimizer settings
 lr: 0.001

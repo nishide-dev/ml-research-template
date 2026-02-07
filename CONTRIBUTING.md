@@ -43,7 +43,6 @@ uvx copier copy --trust \
   --data use_lightning=true \
   --data use_hydra=true \
   --data logger_choice="tensorboard" \
-  --data template_type="minimal" \
   . /tmp/test-project
 ```
 
@@ -168,21 +167,6 @@ Then create a pull request on GitHub using the PR template.
 ## Guidelines
 
 ### Adding New Features
-
-#### New Template Variant (e.g., Reinforcement Learning)
-
-1. Add new template type to `copier.yml`:
-   ```yaml
-   template_type:
-     choices:
-       "Reinforcement Learning": "rl"
-   ```
-
-2. Create template-specific files in appropriate directories
-
-3. Update README.md with new template documentation
-
-4. Test template generation thoroughly
 
 #### New Framework Support (e.g., JAX)
 

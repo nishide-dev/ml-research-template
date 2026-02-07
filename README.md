@@ -34,15 +34,6 @@
 | 2.5.1   | 12.1           |
 | 2.4.1   | 11.8           |
 
-### 📦 複数のテンプレートタイプ
-
-- **画像分類** (Image Classification): MNIST, CIFAR-10/100, Fashion-MNIST
-- **セグメンテーション** (Segmentation): 画像セグメンテーション
-- **物体検出** (Object Detection): YOLO 系モデル
-- **テキスト分類** (Text Classification): NLP タスク
-- **GNN** (Graph Neural Network): グラフデータ
-- **最小限** (Minimal): カスタムプロジェクト用
-
 ## クイックスタート
 
 ### 前提条件
@@ -110,14 +101,6 @@ uvx copier copy --trust gh:nishide-dev/ml-research-template my-project \
 - MLflow（オンプレミス向け）
 - 両方（TensorBoard + W&B）
 - なし
-
-**テンプレートタイプ**:
-- 画像分類（MNIST, CIFAR-10/100, Fashion-MNIST）
-- セグメンテーション
-- 物体検出
-- テキスト分類
-- GNN（グラフニューラルネットワーク）
-- 最小限（カスタムプロジェクト用）
 
 **開発ツール**:
 - ruff (linter/formatter)
@@ -246,7 +229,6 @@ uvx copier copy --trust \
   --data use_lightning=true \
   --data use_hydra=true \
   --data logger_choice="tensorboard" \
-  --data template_type="minimal" \
   . /tmp/test-project
 
 # 生成されたプロジェクトを検証
