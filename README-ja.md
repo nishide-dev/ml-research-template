@@ -17,7 +17,8 @@
 ### ⚡ 高速な開発環境
 
 - **uv**: pip の 10-100 倍高速な Python パッケージマネージャー
-- **pixi**: Conda 代替、GPU 環境の自動設定
+- **pixi**: Conda 代替、CUDA環境を完全分離（ホストと干渉なし）
+- **統合 pyproject.toml**: 両パッケージマネージャー用の単一設定ファイル
 - **ruff**: 高速リンター & フォーマッター
 - **ty**: 高速型チェッカー（by Astral）
 - **pytest**: テストフレームワーク
@@ -81,8 +82,8 @@ uvx copier copy --trust gh:nishide-dev/ml-research-template my-project \
 - Python バージョン (3.10, 3.11, 3.12, 3.13)
 
 **パッケージマネージャー**:
-- `uv`: 高速、pip 互換、シンプル
-- `pixi`: Conda ベース、GPU 環境自動設定
+- `uv`: 高速、pip 互換、PyTorch with bundled CUDA
+- `pixi`: Conda ベース、CUDA環境を完全分離（`.pixi/envs/`内）
 
 **PyTorch/CUDA 設定**:
 - 9 種類のプリセット（PyTorch 2.4-2.9, CUDA 11.8-13.0）
@@ -139,8 +140,7 @@ my-project/
 │   │   └── mlflow.yaml
 │   └── experiment/
 │       └── baseline.yaml
-├── pyproject.toml                # uv + 依存関係
-├── pixi.toml                     # pixi 設定（pixi 選択時）
+├── pyproject.toml                # 統合設定（uv + pixi）
 ├── ruff.toml                     # ruff 設定
 ├── .gitignore
 ├── .python-version
@@ -240,6 +240,38 @@ uv run ruff check .
 ```bash
 # 既存プロジェクトを最新テンプレートで更新
 uvx copier update /path/to/my-project
+```
+
+## 主要機能
+
+### 統合 pyproject.toml
+
+`uv` と `pixi` の両パッケージマネージャーが**単一の `pyproject.toml` ファイル**を使用：
+
+- **UV ユーザー**: `[tool.uv]` セクションを使用、PyTorch wheel インデックス（CUDA同梱）
+- **Pixi ユーザー**: `[tool.pixi.*]` セクションを使用、conda CUDA toolkit（`.pixi/envs/`に分離）
+
+### CUDA 環境分離（Pixi）
+
+Pixi プロジェクトは**ホストシステムから完全に分離された CUDA 環境**を提供：
+
+```toml
+[tool.pixi.activation]
+env = { PYTHONNOUSERSITE = "1" }  # ~/.local から分離
+
+[tool.pixi.dependencies]
+cuda = { version = "12.6.*", channel = "nvidia" }  # 分離されたCUDA
+```
+
+**メリット**:
+- ホストのCUDAインストールと干渉しない
+- マシン間で再現可能なGPU環境
+- 同一マシン上で複数のCUDAバージョン（異なるプロジェクト）
+
+**検証方法**:
+```bash
+pixi run python -c "import torch; print(torch.__file__)"
+# 出力: /path/to/project/.pixi/envs/default/lib/python3.11/site-packages/torch/
 ```
 
 ## 関連プロジェクト

@@ -19,7 +19,8 @@
 ### ⚡ Fast Development Environment
 
 - **uv**: 10-100x faster Python package manager than pip
-- **pixi**: Conda alternative with automatic GPU environment setup
+- **pixi**: Conda alternative with isolated CUDA environment (no host interference)
+- **Unified pyproject.toml**: Single configuration file for both package managers
 - **ruff**: Fast linter & formatter
 - **ty**: Fast type checker (by Astral)
 - **pytest**: Testing framework
@@ -83,8 +84,8 @@ Interactive prompts will ask for:
 - Python version (3.10, 3.11, 3.12, 3.13)
 
 **Package Manager**:
-- `uv`: Fast, pip-compatible, simple
-- `pixi`: Conda-based, automatic GPU setup
+- `uv`: Fast, pip-compatible, PyTorch with bundled CUDA
+- `pixi`: Conda-based, isolated CUDA environment (`.pixi/envs/`)
 
 **PyTorch/CUDA Configuration**:
 - 9 presets (PyTorch 2.4-2.9, CUDA 11.8-13.0)
@@ -141,8 +142,7 @@ my-project/
 │   │   └── mlflow.yaml
 │   └── experiment/
 │       └── baseline.yaml
-├── pyproject.toml                # uv + dependencies
-├── pixi.toml                     # pixi config (if pixi selected)
+├── pyproject.toml                # Unified config (uv + pixi)
 ├── ruff.toml                     # ruff config
 ├── .gitignore
 ├── .python-version
@@ -242,6 +242,38 @@ uv run ruff check .
 ```bash
 # Update existing project with latest template
 uvx copier update /path/to/my-project
+```
+
+## Key Features
+
+### Unified pyproject.toml
+
+Both `uv` and `pixi` package managers use a **single `pyproject.toml` file**:
+
+- **UV users**: Uses `[tool.uv]` sections with PyTorch wheel indexes (bundled CUDA)
+- **Pixi users**: Uses `[tool.pixi.*]` sections with conda CUDA toolkit (isolated in `.pixi/envs/`)
+
+### CUDA Isolation (Pixi)
+
+Pixi projects provide **complete CUDA isolation** from the host system:
+
+```toml
+[tool.pixi.activation]
+env = { PYTHONNOUSERSITE = "1" }  # Isolate from ~/.local
+
+[tool.pixi.dependencies]
+cuda = { version = "12.6.*", channel = "nvidia" }  # Isolated CUDA
+```
+
+**Benefits**:
+- No interference with host CUDA installations
+- Reproducible GPU environments across machines
+- Multiple CUDA versions on same machine (different projects)
+
+**Verification**:
+```bash
+pixi run python -c "import torch; print(torch.__file__)"
+# Output: /path/to/project/.pixi/envs/default/lib/python3.11/site-packages/torch/
 ```
 
 ## Related Projects

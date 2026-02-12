@@ -181,6 +181,7 @@ wandb_entity:
 _exclude:
   - "copier.yml"
   - "copier.yaml"
+  - "pixi.toml.jinja"  # No longer used - unified in pyproject.toml
   - ".git"
   - ".venv"
   - "__pycache__"

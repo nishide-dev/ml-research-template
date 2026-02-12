@@ -1,5 +1,9 @@
-# pyproject.toml - Python project configuration
+# pyproject.toml - Unified Python project configuration
 # Generated from ML Research Copier template
+#
+# This file supports BOTH uv and pixi package managers:
+# - UV: Uses PyTorch wheel indexes (bundled CUDA in wheel)
+# - Pixi: Uses conda channels (isolated CUDA runtime in .pixi/envs/)
 
 {# Extract PyTorch/CUDA versions from preset #}
 {% if pytorch_cuda_preset == 'pytorch-2.9.0-cuda-12.6' %}
@@ -32,6 +36,10 @@
 {# else: use custom values from user input #}
 {% endif %}
 
+# ============================================================================
+# Standard Python Project Metadata (PEP 621)
+# ============================================================================
+
 [project]
 name = "{{ project_name }}"
 version = "0.1.0"
@@ -41,7 +49,7 @@ authors = [
     { name = "{{ author_name }}", email = "{{ author_email }}" }
 ]
 requires-python = ">={{ python_version }}"
-dependencies = []
+dependencies = []  # All dependencies are development-time only
 
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -66,25 +74,27 @@ classifiers = [
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.uv]
-managed = true
-
 [tool.hatch.build.targets.wheel]
 packages = ["src/{{ package_name }}"]
 
+{% if package_manager == 'uv' -%}
 # ============================================================================
-# PyTorch CUDA Index Configuration
+# UV Configuration (Fast Python Package Manager)
 # ============================================================================
-# uvの公式ガイドに従ったPyTorchインデックス設定
-# https://docs.astral.sh/uv/guides/integration/pytorch/
+# UV uses PyTorch wheel indexes with bundled CUDA runtime
+# Reference: https://docs.astral.sh/uv/guides/integration/pytorch/
 
+[tool.uv]
+managed = true
+
+# PyTorch CUDA wheel index configuration
 [[tool.uv.index]]
 name = "pytorch-cu{{ cuda_version | replace('.', '') }}"
 url = "https://download.pytorch.org/whl/cu{{ cuda_version | replace('.', '') }}"
 explicit = true
 
 {% if use_pytorch_geometric -%}
-# PyTorch Geometric のインデックス設定
+# PyTorch Geometric wheel index
 [[tool.uv.index]]
 name = "pytorch-geometric"
 url = "https://data.pyg.org/whl/torch-{{ pytorch_version }}+cu{{ cuda_version | replace('.', '') }}.html"
@@ -92,47 +102,12 @@ explicit = true
 {% endif -%}
 
 # ============================================================================
-# Development tool configurations
-# ============================================================================
-
-{% if use_ty -%}
-[tool.ty]
-
-[tool.ty.environment]
-python-version = "{{ python_version }}"
-
-[tool.ty.terminal]
-output-format = "full"
-{% endif -%}
-
-{% if use_pytest -%}
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-python_files = ["test_*.py", "*_test.py"]
-python_classes = ["Test*"]
-python_functions = ["test_*"]
-addopts = [
-    "--strict-markers",
-    "--strict-config",
-    "--showlocals",
-]
-
-[tool.coverage.run]
-source = ["src"]
-branch = true
-
-[tool.coverage.report]
-show_missing = true
-skip_covered = false
-{% endif -%}
-
-# ============================================================================
-# Dependency Groups (PEP 735)
+# UV Dependency Groups (PEP 735)
 # ============================================================================
 
 [dependency-groups]
 dev = [
-    # Core ML frameworks
+    # Core ML frameworks (PyPI with bundled CUDA)
     "torch=={{ pytorch_version }}",
 {%- if use_torchvision %}
     "torchvision",
@@ -178,3 +153,184 @@ dev = [
     "matplotlib>=3.7",
     "scikit-learn>=1.3",
 ]
+{% endif -%}
+
+{% if package_manager == 'pixi' -%}
+# ============================================================================
+# Pixi Configuration (Conda-based Package Manager)
+# ============================================================================
+# Pixi uses conda channels with isolated CUDA runtime in .pixi/envs/
+# Reference: https://pixi.prefix.dev/latest/python/pytorch/
+
+[tool.pixi.workspace]
+name = "{{ project_name }}"
+version = "0.1.0"
+description = "{{ description }}"
+channels = ["nvidia", "pytorch", "conda-forge"]
+platforms = ["linux-64"]
+
+# System requirements for CUDA-enabled training
+[tool.pixi.system-requirements]
+cuda = "{{ cuda_version }}"
+
+# Activation environment: Isolate from user site-packages
+[tool.pixi.activation]
+env = { PYTHONNOUSERSITE = "1" }
+
+# ============================================================================
+# Pixi Conda Dependencies (System libraries & CUDA runtime)
+# ============================================================================
+
+[tool.pixi.dependencies]
+# Python interpreter from conda
+python = "{{ python_version }}.*"
+
+# CUDA toolkit from nvidia channel (isolated in .pixi/envs/)
+# This provides isolated CUDA runtime, NOT using host CUDA
+cuda = { version = "{{ cuda_version }}.*", channel = "nvidia" }
+cudnn = { version = "*", channel = "nvidia" }
+
+# ============================================================================
+# Pixi PyPI Dependencies (Pure Python packages)
+# ============================================================================
+
+[tool.pixi.pypi-dependencies]
+# Local package in editable mode
+{{ project_name }} = { path = ".", editable = true }
+
+# PyTorch from PyPI (uses conda CUDA from above)
+torch = "=={{ pytorch_version }}"
+{% if use_torchvision -%}
+torchvision = "*"
+{% endif -%}
+{% if use_torchaudio -%}
+torchaudio = "*"
+{% endif -%}
+
+# ML frameworks
+{% if use_lightning -%}
+pytorch-lightning = ">={{ lightning_version }}"
+rich = ">=10.2.2"  # Required for RichProgressBar
+{% endif -%}
+{% if use_hydra -%}
+hydra-core = ">={{ hydra_version }}"
+{% endif -%}
+
+# Experiment tracking
+{% if logger_choice == 'tensorboard' or logger_choice == 'both' -%}
+tensorboard = ">=2.15"
+{% endif -%}
+{% if logger_choice == 'wandb' or logger_choice == 'both' -%}
+wandb = ">=0.16"
+{% endif -%}
+{% if logger_choice == 'mlflow' -%}
+mlflow = ">=2.9"
+{% endif -%}
+
+# Core scientific packages
+numpy = ">=1.24"
+matplotlib = ">=3.7"
+scikit-learn = ">=1.3"
+
+{% if use_pytorch_geometric -%}
+# ============================================================================
+# Pixi Feature: PyTorch Geometric
+# ============================================================================
+
+[tool.pixi.feature.pyg.pypi-dependencies]
+torch-geometric = "*"
+torch-scatter = "*"
+torch-sparse = "*"
+torch-cluster = "*"
+{% endif -%}
+
+# ============================================================================
+# Pixi Feature: Development Tools
+# ============================================================================
+
+[tool.pixi.feature.dev.pypi-dependencies]
+{% if use_pytest -%}
+pytest = ">=8.0"
+pytest-cov = ">=4.1"
+{% endif -%}
+{% if use_ruff -%}
+ruff = ">=0.6"
+{% endif -%}
+{% if use_ty -%}
+ty = "*"
+{% endif -%}
+
+# ============================================================================
+# Pixi Tasks (Workflow automation)
+# ============================================================================
+
+[tool.pixi.tasks]
+{% if use_hydra -%}
+train = "python src/{{ package_name }}/train.py"
+train-cpu = "python src/{{ package_name }}/train.py trainer.accelerator=cpu"
+train-gpu = "python src/{{ package_name }}/train.py trainer.accelerator=gpu"
+train-debug = "python src/{{ package_name }}/train.py trainer.fast_dev_run=true"
+{% else -%}
+train = "python src/{{ package_name }}/train.py"
+{% endif -%}
+{% if logger_choice == 'tensorboard' or logger_choice == 'both' -%}
+tensorboard = "tensorboard --logdir logs/"
+{% endif -%}
+{% if use_pytest -%}
+test = "pytest tests/ -v"
+test-cov = "pytest tests/ -v --cov=src/{{ package_name }} --cov-report=term-missing"
+{% endif -%}
+{% if use_ruff -%}
+lint = "ruff check src/ tests/"
+format = "ruff format src/ tests/"
+format-check = "ruff format --check src/ tests/"
+{% endif -%}
+{% if use_ty -%}
+typecheck = "ty check"
+{% endif -%}
+
+# ============================================================================
+# Pixi Environments (Feature combinations)
+# ============================================================================
+
+[tool.pixi.environments]
+default = { features = [
+{%- if use_pytorch_geometric %}"pyg", {% endif -%}
+"dev"], solve-group = "default" }
+prod = { features = [], solve-group = "prod" }
+{% endif -%}
+
+# ============================================================================
+# Shared Development Tool Configurations
+# ============================================================================
+
+{% if use_ty -%}
+[tool.ty]
+
+[tool.ty.environment]
+python-version = "{{ python_version }}"
+
+[tool.ty.terminal]
+output-format = "full"
+{% endif -%}
+
+{% if use_pytest -%}
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--showlocals",
+]
+
+[tool.coverage.run]
+source = ["src"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
+{% endif -%}
