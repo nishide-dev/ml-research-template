@@ -167,9 +167,10 @@ name = "{{ project_name }}"
 version = "0.1.0"
 description = "{{ description }}"
 channels = ["nvidia", "pytorch", "conda-forge"]
-platforms = ["linux-64"]
+platforms = ["linux-64", "osx-arm64"]
 
 # System requirements for CUDA-enabled training
+# Note: These are advisory and only enforced on platforms where CUDA is available
 [tool.pixi.system-requirements]
 cuda = "{{ cuda_version }}"
 
@@ -187,6 +188,8 @@ python = "{{ python_version }}.*"
 
 # CUDA toolkit from nvidia channel (isolated in .pixi/envs/)
 # This provides isolated CUDA runtime, NOT using host CUDA
+# Note: CUDA is only available on Linux platforms
+[tool.pixi.target.linux-64.dependencies]
 cuda = { version = "{{ cuda_version }}.*", channel = "nvidia" }
 cudnn = { version = "*", channel = "nvidia" }
 
