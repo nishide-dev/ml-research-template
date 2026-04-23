@@ -253,7 +253,8 @@ torch-cluster = "*"
 
 # pixi resolves PyPI packages via pypi-options; find-links makes pre-built
 # wheels discoverable from the PyG wheel server instead of building from source
-[tool.pixi.pypi-options]
+[tool.pixi.feature.pyg.pypi-options]
+index-url = "https://pypi.org/simple"
 find-links = [{ url = "https://data.pyg.org/whl/torch-{{ pytorch_version }}+cu{{ cuda_version | replace('.', '') }}.html" }]
 {% endif -%}
 

@@ -163,7 +163,8 @@ jobs:
         working-directory: /tmp/test-pyg-project
         run: |
           grep -F 'platforms = ["linux-64"]' pyproject.toml
-          grep -F '[tool.pixi.pypi-options]' pyproject.toml
+          grep -F '[tool.pixi.feature.pyg.pypi-options]' pyproject.toml
+          grep -F 'index-url = "https://pypi.org/simple"' pyproject.toml
           grep -F 'find-links = [{ url = "https://data.pyg.org/whl/torch-2.8.0+cu126.html" }]' pyproject.toml
 
       - name: Verify dependencies (pixi PyG)
