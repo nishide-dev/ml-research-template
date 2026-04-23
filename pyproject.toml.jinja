@@ -172,7 +172,7 @@ name = "{{ project_name }}"
 version = "0.1.0"
 description = "{{ description }}"
 channels = ["nvidia", "pytorch", "conda-forge"]
-platforms = ["linux-64"]
+platforms = [{% if use_pytorch_geometric %}"linux-64"{% else %}"linux-64", "osx-arm64"{% endif %}]
 
 # System requirements for CUDA-enabled training
 # Note: These are advisory and only enforced on platforms where CUDA is available
