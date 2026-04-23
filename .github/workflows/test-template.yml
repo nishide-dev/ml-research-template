@@ -79,7 +79,7 @@ jobs:
         if: matrix.package-manager == 'pixi'
         working-directory: /tmp/test-project
         run: |
-          grep 'platforms = ["linux-64", "osx-arm64"]' pyproject.toml
+          grep -F 'platforms = ["linux-64", "osx-arm64"]' pyproject.toml
 
       - name: Verify dependencies (uv)
         if: matrix.package-manager == 'uv'
@@ -162,8 +162,9 @@ jobs:
       - name: Verify pixi PyG template output
         working-directory: /tmp/test-pyg-project
         run: |
-          grep 'platforms = ["linux-64"]' pyproject.toml
-          grep 'find-links = ["https://data.pyg.org/whl/torch-2.8.0+cu126.html"]' pyproject.toml
+          grep -F 'platforms = ["linux-64"]' pyproject.toml
+          grep -F '[tool.pixi.pypi-options]' pyproject.toml
+          grep -F 'find-links = [{ url = "https://data.pyg.org/whl/torch-2.8.0+cu126.html" }]' pyproject.toml
 
       - name: Verify dependencies (pixi PyG)
         working-directory: /tmp/test-pyg-project

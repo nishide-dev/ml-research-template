@@ -251,10 +251,10 @@ torch-scatter = "*"
 torch-sparse = "*"
 torch-cluster = "*"
 
-# pixi uses uv internally for PyPI resolution; find-links makes pre-built
+# pixi resolves PyPI packages via pypi-options; find-links makes pre-built
 # wheels discoverable from the PyG wheel server instead of building from source
-[tool.uv]
-find-links = ["https://data.pyg.org/whl/torch-{{ pytorch_version }}+cu{{ cuda_version | replace('.', '') }}.html"]
+[tool.pixi.pypi-options]
+find-links = [{ url = "https://data.pyg.org/whl/torch-{{ pytorch_version }}+cu{{ cuda_version | replace('.', '') }}.html" }]
 {% endif -%}
 
 # ============================================================================
