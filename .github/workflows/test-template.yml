@@ -75,6 +75,12 @@ jobs:
           test -f src/test_ml_project/data/datamodule.py
           test -d tests
 
+      - name: Verify pixi non-PyG platforms
+        if: matrix.package-manager == 'pixi'
+        working-directory: /tmp/test-project
+        run: |
+          grep -F 'platforms = ["linux-64", "osx-arm64"]' pyproject.toml
+
       - name: Verify dependencies (uv)
         if: matrix.package-manager == 'uv'
         working-directory: /tmp/test-project
@@ -108,3 +114,59 @@ jobs:
           pixi run ruff check . || true
           pixi run ruff format --check . || true
           pixi run pytest tests/ || true
+
+  test-pyg-pixi-generation:
+    name: Test Pixi PyG Generation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout template
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      - name: Add uv to PATH
+        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Install pixi
+        run: curl -fsSL https://pixi.sh/install.sh | bash
+
+      - name: Add pixi to PATH
+        run: echo "$HOME/.pixi/bin" >> $GITHUB_PATH
+
+      - name: Generate pixi project with PyG enabled
+        run: |
+          uvx copier copy --trust \
+            --data project_name="test-pyg-project" \
+            --data package_name="test_pyg_project" \
+            --data description="Test PyG project" \
+            --data author_name="Test Author" \
+            --data author_email="test@example.com" \
+            --data python_version="3.11" \
+            --data package_manager="pixi" \
+            --data pytorch_cuda_preset="pytorch-2.8.0-cuda-12.6" \
+            --data use_ruff=true \
+            --data use_ty=true \
+            --data use_pytest=true \
+            --data use_torchvision=true \
+            --data use_torchaudio=false \
+            --data use_lightning=true \
+            --data lightning_version="2.4" \
+            --data use_hydra=true \
+            --data hydra_version="1.3" \
+            --data use_pytorch_geometric=true \
+            --data logger_choice="tensorboard" \
+            . /tmp/test-pyg-project
+
+      - name: Verify pixi PyG template output
+        working-directory: /tmp/test-pyg-project
+        run: |
+          grep -F 'platforms = ["linux-64"]' pyproject.toml
+          grep -F '[tool.pixi.feature.pyg.pypi-options]' pyproject.toml
+          grep -F 'index-url = "https://pypi.org/simple"' pyproject.toml
+          grep -F 'find-links = [{ url = "https://data.pyg.org/whl/torch-2.8.0+cu126.html" }]' pyproject.toml
+
+      - name: Verify dependencies (pixi PyG)
+        working-directory: /tmp/test-pyg-project
+        run: pixi install

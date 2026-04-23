@@ -99,6 +99,11 @@ explicit = true
 name = "pytorch-geometric"
 url = "https://data.pyg.org/whl/torch-{{ pytorch_version }}+cu{{ cuda_version | replace('.', '') }}.html"
 explicit = true
+
+[tool.uv.sources]
+torch-scatter = { index = "pytorch-geometric" }
+torch-sparse = { index = "pytorch-geometric" }
+torch-cluster = { index = "pytorch-geometric" }
 {% endif -%}
 
 # ============================================================================
@@ -167,7 +172,7 @@ name = "{{ project_name }}"
 version = "0.1.0"
 description = "{{ description }}"
 channels = ["nvidia", "pytorch", "conda-forge"]
-platforms = ["linux-64", "osx-arm64"]
+platforms = [{% if use_pytorch_geometric %}"linux-64"{% else %}"linux-64", "osx-arm64"{% endif %}]
 
 # System requirements for CUDA-enabled training
 # Note: These are advisory and only enforced on platforms where CUDA is available
@@ -245,6 +250,12 @@ torch-geometric = "*"
 torch-scatter = "*"
 torch-sparse = "*"
 torch-cluster = "*"
+
+# pixi resolves PyPI packages via pypi-options; find-links makes pre-built
+# wheels discoverable from the PyG wheel server instead of building from source
+[tool.pixi.feature.pyg.pypi-options]
+index-url = "https://pypi.org/simple"
+find-links = [{ url = "https://data.pyg.org/whl/torch-{{ pytorch_version }}+cu{{ cuda_version | replace('.', '') }}.html" }]
 {% endif -%}
 
 # ============================================================================
