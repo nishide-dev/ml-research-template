@@ -203,6 +203,10 @@ _exclude:
   - ".pre-commit-config.yaml"
   - "CONTRIBUTING.md"
   - "LICENSE"
+  - "docs"
+  - "README-ja.md"
+  - "CLAUDE.md"
+  - ".claude"
 
 # ============================================================================
 # Post-generation tasks
