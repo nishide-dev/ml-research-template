@@ -1,3 +1,4 @@
+{%- set effective_cuda_version = cuda_version if pytorch_cuda_preset == 'custom' else pytorch_cuda_preset.split('-cuda-')[1] -%}
 name: Tests
 
 on:
@@ -5,6 +6,13 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+{%- if package_manager == "pixi" %}
+
+env:
+  # GPU-less runners cannot satisfy the cuda system-requirement;
+  # pixi >= 0.76 refuses to solve without this mock.
+  CONDA_OVERRIDE_CUDA: "{{ effective_cuda_version }}"
+{%- endif %}
 
 jobs:
 {%- if use_pytest %}

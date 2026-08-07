@@ -6,6 +6,12 @@ on:
   pull_request:
   workflow_dispatch:
 
+env:
+  # GPU-less runners cannot satisfy the generated project's cuda
+  # system-requirement; pixi >= 0.76 refuses to solve without this mock.
+  # Keep in sync with the CUDA version of the matrix pytorch-presets.
+  CONDA_OVERRIDE_CUDA: "12.6"
+
 jobs:
   test-generation:
     name: Test Template Generation
